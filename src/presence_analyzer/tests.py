@@ -53,6 +53,36 @@ class PresenceAnalyzerViewsTestCase(unittest.TestCase):
         self.assertEqual(len(data), 2)
         self.assertDictEqual(data[0], {u'user_id': 10, u'name': u'User 10'})
 
+    def test_api_mean_time_weekday(self):
+        """
+        Test mean time weeklday listing.
+        """
+        resp = self.client.get('/api/v1/mean_time_weekday/1')
+        self.assertEqual(resp.status_code, 200)
+        data = json.loads(resp.data)
+        self.assertEqual(len(data), 0)
+        resp = self.client.get('/api/v1/mean_time_weekday/10')
+        self.assertEqual(resp.status_code, 200)
+        data = json.loads(resp.data)
+        self.assertEqual(len(data), 7)
+        self.assertIn('Mon', data[0])
+        self.assertIn('Sun', data[-1])
+
+    def test_api_presence_weekday(self):
+        """
+        Test presence weekday listing.
+        """
+        resp = self.client.get('/api/v1/presence_weekday/1')
+        self.assertEqual(resp.status_code, 200)
+        data = json.loads(resp.data)
+        self.assertEqual(len(data), 0)
+        resp = self.client.get('/api/v1/presence_weekday/10')
+        self.assertEqual(resp.status_code, 200)
+        data = json.loads(resp.data)
+        self.assertEqual(len(data), 8)
+        self.assertIn('Mon', data[1])
+        self.assertIn('Sun', data[-1])
+
 
 class PresenceAnalyzerUtilsTestCase(unittest.TestCase):
     """
@@ -83,6 +113,66 @@ class PresenceAnalyzerUtilsTestCase(unittest.TestCase):
         self.assertItemsEqual(data[10][sample_date].keys(), ['start', 'end'])
         self.assertEqual(data[10][sample_date]['start'],
                          datetime.time(9, 39, 5))
+
+    def test_group_by_weekday(self):
+        """
+        Test weekly grouped.
+        """
+        data = utils.get_data()
+        sample_gbw = utils.group_by_weekday(data[10])
+        expected_gbw = {
+            0: [],
+            1: [30047],
+            2: [24465],
+            3: [23705],
+            4: [],
+            5: [],
+            6: [],
+        }
+        self.assertDictEqual(sample_gbw, expected_gbw)
+
+    def test_seconds_since_midnight(self):
+        """
+        Test calculating seconds since midnight.
+        """
+        sample_time = datetime.time(0, 0, 0)
+        sample_ssm = utils.seconds_since_midnight(sample_time)
+        self.assertEqual(sample_ssm, 0)
+        self.assertIsInstance(sample_ssm, int)
+        sample_time = datetime.time(15, 9, 50)
+        sample_ssm = utils.seconds_since_midnight(sample_time)
+        self.assertEqual(sample_ssm, 54590)
+        self.assertIsInstance(sample_ssm, int)
+
+    def test_interval(self):
+        """
+        Test interval of time from two points.
+        """
+        sample_start = datetime.time(5, 0, 0)
+        sample_end = datetime.time(15, 0, 0)
+        sample_interval = utils.interval(sample_start, sample_end)
+        self.assertEqual(sample_interval, 36000)
+        self.assertIsInstance(sample_interval, int)
+        sample_start = datetime.time(2, 15, 50)
+        sample_end = datetime.time(22, 0, 0)
+        sample_interval = utils.interval(sample_start, sample_end)
+        self.assertEqual(sample_interval, 71050)
+        self.assertIsInstance(sample_interval, int)
+
+    def test_mean(self):
+        """
+        Test mean of list elements.
+        """
+        sample_mean = utils.mean([])
+        self.assertEqual(sample_mean, 0)
+        sample_mean = utils.mean([6, 3, 0])
+        self.assertEqual(sample_mean, 3.0)
+        self.assertIsInstance(sample_mean, float)
+        sample_mean = utils.mean([5432.1, 1234.42, 876.23])
+        self.assertEqual(sample_mean, 2514.25)
+        self.assertIsInstance(sample_mean, float)
+        sample_mean = utils.mean([5432.1, 1234.42, 876.23])
+        self.assertNotEqual(sample_mean, 7542.75)
 
 
 def suite():

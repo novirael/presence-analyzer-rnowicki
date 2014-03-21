@@ -68,13 +68,28 @@ def get_data():
 
 def group_by_weekday(items):
     """
-    Groups presence entries by weekday.
+    Groups presence entries by weekday. 
+    Returns interval time of work grouped by weekday.
     """
     result = {i: [] for i in range(7)}
     for date in items:
         start = items[date]['start']
         end = items[date]['end']
         result[date.weekday()].append(interval(start, end))
+    return result
+
+
+def group_by_weekday_with_points(items):
+    """
+    Groups presence entries by weekday. 
+    Returns interval time of entrance and leave grouped by weekday.
+    """
+    result = {i: [[], []] for i in range(7)}
+    for date in items:
+        start = items[date]['start']
+        end = items[date]['end']
+        result[date.weekday()][0].append(seconds_since_midnight(start))
+        result[date.weekday()][1].append(seconds_since_midnight(end))
     return result
 
 

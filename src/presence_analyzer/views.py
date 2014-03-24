@@ -4,7 +4,7 @@ Defines views.
 """
 
 import calendar
-from flask import redirect, render_template
+from flask import redirect, render_template, url_for
 
 from presence_analyzer.main import app
 from presence_analyzer.utils import jsonify, get_data, mean, \
@@ -19,7 +19,22 @@ def mainpage():
     """
     Redirects to front page.
     """
-    return redirect('/static/presence_weekday.html')
+    return redirect(url_for('presenceweekday'))
+
+
+@app.route('/chart/presenceweekday')
+def presenceweekday():
+    return render_template('presenceweekday.html', presenceweekday=True)
+
+
+@app.route('/chart/meantime')
+def meantime():
+    return render_template('meantime.html', meantime=True)
+
+
+@app.route('/chart/presencestartend')
+def presencestartend():
+    return render_template('presencestartend.html', presencestartend=True)
 
 
 @app.route('/api/v1/users', methods=['GET'])
@@ -33,6 +48,7 @@ def users_view():
             for i in data.keys()]
 
 
+@app.route('/api/v1/mean_time_weekday/')
 @app.route('/api/v1/mean_time_weekday/<int:user_id>', methods=['GET'])
 @jsonify
 def mean_time_weekday_view(user_id):
@@ -51,6 +67,7 @@ def mean_time_weekday_view(user_id):
     return result
 
 
+@app.route('/api/v1/presence_weekday/')
 @app.route('/api/v1/presence_weekday/<int:user_id>', methods=['GET'])
 @jsonify
 def presence_weekday_view(user_id):
@@ -70,6 +87,7 @@ def presence_weekday_view(user_id):
     return result
 
 
+@app.route('/api/v1/presence_start_end/')
 @app.route('/api/v1/presence_start_end/<int:user_id>', methods=['GET'])
 @jsonify
 def presence_start_end(user_id):
@@ -86,15 +104,3 @@ def presence_start_end(user_id):
     result = [(calendar.day_abbr[weekday], mean(points[0]), mean(points[1]))
               for weekday, points in weekdays.items()]
     return result
-
-@app.route('/chart/meantime')
-def meantime():
-    return render_template('meantime.html', meantime=True)
-
-@app.route('/chart/presenceweekday')
-def presenceweekday():
-    return render_template('presenceweekday.html', preweekday=True)
-
-@app.route('/chart/presencestartend')
-def presencestartend():
-    return render_template('presencestartend.html', prestartend=True)

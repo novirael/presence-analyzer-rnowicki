@@ -2,16 +2,19 @@
 <html lang=en>
 <head>
     <meta charset=utf-8>
+
     <title>Presence analyzer</title>
+
     <meta name="keywords" content="" />
     <meta name="description" content=""/>
     <meta name="author" content="STX Next sp. z o.o."/>
-    <meta name="viewport" content="width=device-width; initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <link href="/static/css/normalize.css" media="all" rel="stylesheet" type="text/css" />
-    <link href="/static/css/style.css" media="all" rel="stylesheet" type="text/css" />
+    <link href="{{ url_for('static', filename='css/normalize.css') }}" media="all" rel="stylesheet" type="text/css" />
+    <link href="{{ url_for('static', filename='css/style.css') }}" media="all" rel="stylesheet" type="text/css" />
 
-    <script src="/static/js/jquery.min.js"></script>
+    <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 
     {% block script %}{% endblock %}
@@ -23,14 +26,14 @@
         <div id="header">
             <h1>Presence analyzer</h1>
             <ul>
-                <li {% if preweekday %}id="selected"{% endif %}>
-                	<a href="{{ url_for('pre') }}">Presence by weekday</a>
+                <li {% if presenceweekday %}id="selected"{% endif %}>
+                	<a href="{{ url_for('presenceweekday') }}">Presence by weekday</a>
                 </li>
                 <li {% if meantime %}id="selected"{% endif %}>
-                	<a href="">Presence mean time</a>
+                	<a href="{{ url_for('meantime') }}">Presence mean time</a>
                 </li>
-                <li {% if prestartend %}id="selected"{% endif %}>
-                	<a href="">Presence start-end</a>
+                <li {% if presencestartend %}id="selected"{% endif %}>
+                	<a href="{{ url_for('presencestartend') }}">Presence start-end</a>
                 </li>
             </ul>
         </div>
@@ -44,7 +47,7 @@
                 <div id="chart_div" style="display: none">
                 </div>
                 <div id="loading">
-                    <img src="/static/img/loading.gif" />
+                    <img src="{{ url_for('static', filename='img/loading.gif') }}" />
                 </div>
             </p>
         </div>

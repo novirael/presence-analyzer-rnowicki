@@ -4,7 +4,7 @@ Defines views.
 """
 
 import calendar
-from flask import redirect
+from flask import redirect, render_template
 
 from presence_analyzer.main import app
 from presence_analyzer.utils import jsonify, get_data, mean, \
@@ -86,3 +86,15 @@ def presence_start_end(user_id):
     result = [(calendar.day_abbr[weekday], mean(points[0]), mean(points[1]))
               for weekday, points in weekdays.items()]
     return result
+
+@app.route('/chart/meantime')
+def meantime():
+    return render_template('meantime.html', meantime=True)
+
+@app.route('/chart/presenceweekday')
+def presenceweekday():
+    return render_template('presenceweekday.html', preweekday=True)
+
+@app.route('/chart/presencestartend')
+def presencestartend():
+    return render_template('presencestartend.html', prestartend=True)

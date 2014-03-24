@@ -83,6 +83,21 @@ class PresenceAnalyzerViewsTestCase(unittest.TestCase):
         self.assertIn('Mon', data[1])
         self.assertIn('Sun', data[-1])
 
+    def test_api_presence_start_end(self):
+        """
+        Test presence start end listing.
+        """
+        resp = self.client.get('/api/v1/presence_start_end/1')
+        self.assertEqual(resp.status_code, 200)
+        data = json.loads(resp.data)
+        self.assertEqual(len(data), 0)
+        resp = self.client.get('/api/v1/presence_start_end/10')
+        self.assertEqual(resp.status_code, 200)
+        data = json.loads(resp.data)
+        self.assertEqual(len(data), 7)
+        self.assertIn('Mon', data[0])
+        self.assertIn('Sun', data[-1])
+
 
 class PresenceAnalyzerUtilsTestCase(unittest.TestCase):
     """
@@ -130,6 +145,23 @@ class PresenceAnalyzerUtilsTestCase(unittest.TestCase):
             6: [],
         }
         self.assertDictEqual(sample_gbw, expected_gbw)
+
+    def test_group_by_weekday_with_points(self):
+        """
+        Test weekly grouped with points.
+        """
+        data = utils.get_data()
+        sample_gbwp = utils.group_by_weekday_with_points(data[10])
+        expected_gbwp = {
+            0: [[], []],
+            1: [[34745], [64792]],
+            2: [[33592], [58057]],
+            3: [[38926], [62631]],
+            4: [[], []],
+            5: [[], []],
+            6: [[], []],
+        }
+        self.assertDictEqual(sample_gbwp, expected_gbwp)
 
     def test_seconds_since_midnight(self):
         """

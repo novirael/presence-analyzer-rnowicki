@@ -38,6 +38,8 @@
                             value[1] = parseInterval(value[1]);
                             value[2] = parseInterval(value[2]);
                         })
+                        $('#image').attr('src', '/api/images/users/' + selected_user);
+
                         console.log(result);
                         var data = new google.visualization.DataTable();
 

@@ -44,8 +44,11 @@
                 <select id="user_id" style="display: none">
                     <option value="">--</option>
                 </select>
-                <div id="chart_div" style="display: none">
+
+                <div>
+                    <img id="image" />
                 </div>
+                <div id="chart_div" style="display: none"></div>
                 <div id="loading">
                     <img src="{{ url_for('static', filename='img/loading.gif') }}" />
                 </div>

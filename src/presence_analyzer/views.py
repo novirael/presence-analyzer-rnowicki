@@ -7,7 +7,7 @@ import calendar
 from flask import redirect, render_template, url_for
 
 from presence_analyzer.main import app
-from presence_analyzer.utils import jsonify, get_data, mean, \
+from presence_analyzer.utils import jsonify, get_data, get_details, mean, \
     group_by_weekday, group_by_weekday_with_points
 
 import logging
@@ -43,9 +43,10 @@ def users_view():
     """
     Users listing for dropdown.
     """
-    data = get_data()
-    return [{'user_id': i, 'name': 'User {0}'.format(str(i))}
-            for i in data.keys()]
+    details = get_details()
+
+    return [dict(user_id=i, name=value['name'], avatar=value['avatar'])
+            for i, value in details.items()]
 
 
 @app.route('/api/v1/mean_time_weekday/')
@@ -103,4 +104,5 @@ def presence_start_end(user_id):
 
     result = [(calendar.day_abbr[weekday], mean(points[0]), mean(points[1]))
               for weekday, points in weekdays.items()]
+
     return result

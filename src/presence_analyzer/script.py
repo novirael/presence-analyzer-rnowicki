@@ -5,6 +5,11 @@
 import os
 import sys
 from functools import partial
+from urllib import urlopen
+
+from presence_analyzer.main import app
+
+import xml.etree.ElementTree as etree
 
 import paste.script.command
 import werkzeug.script
@@ -111,3 +116,17 @@ def run():
         _serve('stop', dry_run=dry_run)
 
     werkzeug.script.run()
+
+
+def update_user_details():
+    """
+    Updates XML file with user details
+    """
+    try:
+        tree = etree.parse(urlopen(app.config['DATA_XML_URL']))
+        curr_xml = open(app.config['DATA_XML'], 'w+')
+        curr_xml.write(urlopen(app.config['DATA_XML_URL']).read())
+        curr_xml.close()
+        print 'Updated'
+    except Exception:
+        print 'Unable to update'

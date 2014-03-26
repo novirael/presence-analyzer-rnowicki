@@ -31,6 +31,7 @@ setup(
     entry_points="""
     [console_scripts]
     flask-ctl = presence_analyzer.script:run
+    cron = presence_analyzer.script:update_user_details
 
     [paste.app_factory]
     main = presence_analyzer.script:make_app

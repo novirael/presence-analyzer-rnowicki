@@ -66,12 +66,12 @@ def get_data():
                 log.debug('Problem with line %d: ', i, exc_info=True)
 
             if user_id in usage_id:
-                data.setdefault(user_id, {})[date] = {'start': start, 'end': end}
+                data.setdefault(user_id, {})[date] = dict(start=start, end=end)
             else:
                 err.append(user_id)
-            
+
         for e in set(err):
-            print "User {0} presence data exist but details doesn't exist.".format(e)
+            print "User {0} presence data exist but details doesn't.".format(e)
 
     return data
 

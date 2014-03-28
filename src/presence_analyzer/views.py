@@ -61,7 +61,7 @@ def users_view():
 @app.route('/api/v1/get_avatar/')
 @app.route('/api/v1/get_avatar/<int:user_id>', methods=['GET'])
 @jsonify
-def avatar_view(user_id):
+def avatar_view(user_id=0):
     """
     Returns avatar path for given user.
     """
@@ -74,7 +74,7 @@ def avatar_view(user_id):
 @app.route('/api/v1/mean_time_weekday/')
 @app.route('/api/v1/mean_time_weekday/<int:user_id>', methods=['GET'])
 @jsonify
-def mean_time_weekday_view(user_id):
+def mean_time_weekday_view(user_id=0):
     """
     Returns mean presence time of given user grouped by weekday.
     """
@@ -93,7 +93,7 @@ def mean_time_weekday_view(user_id):
 @app.route('/api/v1/presence_weekday/')
 @app.route('/api/v1/presence_weekday/<int:user_id>', methods=['GET'])
 @jsonify
-def presence_weekday_view(user_id):
+def presence_weekday_view(user_id=0):
     """
     Returns total presence time of given user grouped by weekday.
     """
@@ -113,7 +113,7 @@ def presence_weekday_view(user_id):
 @app.route('/api/v1/presence_start_end/')
 @app.route('/api/v1/presence_start_end/<int:user_id>', methods=['GET'])
 @jsonify
-def presence_start_end(user_id):
+def presence_start_end(user_id=0):
     """
     Returns mean presence time of begin and end of work.
     """

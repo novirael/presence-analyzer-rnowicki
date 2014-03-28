@@ -94,7 +94,7 @@ def get_details():
     details = {}
     try:
         tree = etree.parse(app.config['DATA_XML'])
-        uroot = tree.getroot()[1]
+        uroot = tree.getroot().find('users')
         for child in uroot:
             user_id_xml = int(child.attrib['id'])
             avatar = child.find('avatar').text

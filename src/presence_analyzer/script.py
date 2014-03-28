@@ -131,8 +131,8 @@ def update_user_details():
         curr_xml.close()
         log.debug('Updated')
     except (urllib.URLError, urllib.HTTPError):
-        log.exception('Error downloading xml file.', exc_info=True)
+        log.exception('Error downloading xml file.')
     except IOError:
-        log.exception('Error saving xml file.', exc_info=True)
+        log.exception('Error saving xml file.')
     except KeyError as e:
         log.exception(e)

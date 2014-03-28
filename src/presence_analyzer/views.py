@@ -24,16 +24,25 @@ def mainpage():
 
 @app.route('/chart/presenceweekday')
 def presenceweekday():
+    """
+    Generate view of weekday presence.
+    """
     return render_template('presenceweekday.html', presenceweekday=True)
 
 
 @app.route('/chart/meantime')
 def meantime():
+    """
+    Generate view of mean time presence.
+    """
     return render_template('meantime.html', meantime=True)
 
 
 @app.route('/chart/presencestartend')
 def presencestartend():
+    """
+    Generate view of start and end presence.
+    """
     return render_template('presencestartend.html', presencestartend=True)
 
 
@@ -45,8 +54,21 @@ def users_view():
     """
     details = get_details()
 
-    return [dict(user_id=i, name=value['name'], avatar=value['avatar'])
+    return [{'user_id': i, 'name': value['name'], 'avatar': value['avatar']}
             for i, value in details.items()]
+
+
+@app.route('/api/v1/get_avatar/')
+@app.route('/api/v1/get_avatar/<int:user_id>', methods=['GET'])
+@jsonify
+def avatar_view(user_id):
+    """
+    Returns avatar path for given user.
+    """
+    details = get_details()
+    if user_id in details:
+        return details[user_id]['avatar']
+    return None
 
 
 @app.route('/api/v1/mean_time_weekday/')

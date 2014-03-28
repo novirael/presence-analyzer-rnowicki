@@ -81,7 +81,22 @@ class PresenceAnalyzerViewsTestCase(unittest.TestCase):
             'user_id': 10,
             'name': 'Adam P.',
             'avatar': '/api/images/users/10'
-            })
+        })
+
+    def test_api_view(self):
+        """
+        Test avatar path.
+        """
+        resp = self.client.get('/api/v1/get_avatar/0')
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.content_type, 'application/json')
+        path = json.loads(resp.data)
+        self.assertEqual(path, None)
+        resp = self.client.get('/api/v1/get_avatar/10')
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.content_type, 'application/json')
+        path = json.loads(resp.data)
+        self.assertEqual(path, '/api/images/users/10')
 
     def test_api_mean_time_weekday(self):
         """

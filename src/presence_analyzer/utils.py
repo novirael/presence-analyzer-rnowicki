@@ -35,13 +35,13 @@ def cache(sec):
     """
     def decorator(fun):
         cache_lock = threading.Lock()
-        fun.cache = [datetime.now().time(), {}]
+        fun.cache = [datetime.now(), {}]
 
         def wrapper(*args, **kwargs):
             with cache_lock:
                 now = datetime.now()
-                if now.time() > fun.cache[0]:
-                    fun.cache[0] = (now + timedelta(seconds=sec)).time()
+                if now > fun.cache[0]:
+                    fun.cache[0] = now + timedelta(seconds=sec)
                     fun.cache[1] = fun(*args, **kwargs)
                 return fun.cache[1]
         return wrapper

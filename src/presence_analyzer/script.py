@@ -5,9 +5,15 @@
 import os
 import sys
 from functools import partial
+import urllib
+
+import xml.etree.ElementTree as etree
 
 import paste.script.command
 import werkzeug.script
+
+import logging
+log = logging.getLogger(__name__)
 
 etc = partial(os.path.join, 'parts', 'etc')
 
@@ -111,3 +117,22 @@ def run():
         _serve('stop', dry_run=dry_run)
 
     werkzeug.script.run()
+
+
+def update_user_details():
+    """
+    Updates XML file with user details
+    """
+    app = make_app()
+    try:
+        tree = etree.parse(urllib.urlopen(app.config['DATA_XML_URL']))
+        curr_xml = open(app.config['DATA_XML'], 'w+')
+        curr_xml.write(urllib.urlopen(app.config['DATA_XML_URL']).read())
+        curr_xml.close()
+        log.debug('Updated')
+    except (urllib.URLError, urllib.HTTPError):
+        log.exception('Error downloading xml file.')
+    except IOError:
+        log.exception('Error saving xml file.')
+    except KeyError as e:
+        log.exception(e)

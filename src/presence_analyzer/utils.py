@@ -4,6 +4,7 @@ Helper functions used in views.
 """
 
 import csv
+import xml.etree.ElementTree as etree
 from json import dumps
 from functools import wraps
 from datetime import datetime
@@ -45,7 +46,10 @@ def get_data():
         }
     }
     """
+    usage_id = get_details()
     data = {}
+    err = []
+
     with open(app.config['DATA_CSV'], 'r') as csvfile:
         presence_reader = csv.reader(csvfile, delimiter=',')
         for i, row in enumerate(presence_reader):
@@ -61,9 +65,46 @@ def get_data():
             except (ValueError, TypeError):
                 log.debug('Problem with line %d: ', i, exc_info=True)
 
-            data.setdefault(user_id, {})[date] = {'start': start, 'end': end}
+            if user_id in usage_id:
+                data.setdefault(user_id, {})[date] = {
+                    'start': start,
+                    'end': end,
+                }
+            else:
+                err.append(user_id)
+
+        for e in set(err):
+            log.debug("User %d presence data exist but details doesn't.", e)
 
     return data
+
+
+def get_details():
+    """
+    Parse XML file and groups it by user_id.
+
+    It creates structure like this:
+    details = {
+        'user_id': {
+            'name': 'User name,
+            'avatar': '/example/path/to/image'
+        }
+    }
+    """
+    details = {}
+    try:
+        tree = etree.parse(app.config['DATA_XML'])
+        uroot = tree.getroot().find('users')
+        for child in uroot:
+            user_id_xml = int(child.attrib['id'])
+            avatar = child.find('avatar').text
+            name = child.find('name').text
+            details[user_id_xml] = {'avatar': avatar, 'name': name}
+
+    except IOError:
+        log.debug("Cannot open XML file")
+
+    return details
 
 
 def group_by_weekday(items):

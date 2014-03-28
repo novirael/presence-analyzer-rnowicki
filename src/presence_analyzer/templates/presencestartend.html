@@ -30,14 +30,21 @@
             $('#user_id').change(function(){
                 var selected_user = $("#user_id").val();
                 var chart_div = $('#chart_div');
+                var image_div = $('#image_div');
+                var image = $('#image');
                 if(selected_user) {
                     loading.show();
                     chart_div.hide();
+                    image_div.hide();
                     $.getJSON("{{ url_for('presence_start_end') }}"+ selected_user, function(result) {
+                        $.getJSON("{{ url_for('avatar_view') }}" + selected_user, function(r) {
+                            image.attr('src', r);
+                        });
                         $.each(result, function(index, value) {
                             value[1] = parseInterval(value[1]);
                             value[2] = parseInterval(value[2]);
                         })
+
                         console.log(result);
                         var data = new google.visualization.DataTable();
 
@@ -55,6 +62,7 @@
                         };
 
                         chart_div.show();
+                        image_div.show();
                         loading.hide();
                         var chart = new google.visualization.Timeline(chart_div[0]);
                         chart.draw(data, options);

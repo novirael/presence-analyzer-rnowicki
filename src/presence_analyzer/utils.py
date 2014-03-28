@@ -4,7 +4,7 @@ Helper functions used in views.
 """
 
 import csv
-import Queue
+import threading
 import xml.etree.ElementTree as etree
 from json import dumps
 from functools import wraps
@@ -29,21 +29,21 @@ def jsonify(function):
     return inner
 
 
-_cache = [datetime.now().time(), {}]
-
-
 def cache(sec):
     """
-    Save to cash for given period of time function result.
+    Save to cash function result for given period of time.
     """
-    def decorator(function):
+    def decorator(fun):
+        cache_lock = threading.Lock()
+        fun.cache = [datetime.now().time(), {}]
+
         def wrapper(*args, **kwargs):
-            now = datetime.now()
-            if _cache[0] > now.time():
-                return _cache[1]
-            _cache[0] = (now + timedelta(seconds=sec)).time()
-            _cache[1] = function(*args, **kwargs)
-            return _cache[1]
+            with cache_lock:
+                now = datetime.now()
+                if now.time() > fun.cache[0]:
+                    fun.cache[0] = (now + timedelta(seconds=sec)).time()
+                    fun.cache[1] = fun(*args, **kwargs)
+                return fun.cache[1]
         return wrapper
     return decorator
 

@@ -5,14 +5,15 @@
 import os
 import sys
 from functools import partial
-from urllib import urlopen
-
-from presence_analyzer.main import app
+import urllib
 
 import xml.etree.ElementTree as etree
 
 import paste.script.command
 import werkzeug.script
+
+import logging
+log = logging.getLogger(__name__)
 
 etc = partial(os.path.join, 'parts', 'etc')
 
@@ -122,11 +123,16 @@ def update_user_details():
     """
     Updates XML file with user details
     """
+    app = make_app()
     try:
-        tree = etree.parse(urlopen(app.config['DATA_XML_URL']))
+        tree = etree.parse(urllib.urlopen(app.config['DATA_XML_URL']))
         curr_xml = open(app.config['DATA_XML'], 'w+')
-        curr_xml.write(urlopen(app.config['DATA_XML_URL']).read())
+        curr_xml.write(urllib.urlopen(app.config['DATA_XML_URL']).read())
         curr_xml.close()
-        print 'Updated'
-    except Exception:
-        print 'Unable to update'
+        log.debug('Updated')
+    except (urllib.URLError, urllib.HTTPError):
+        log.exception('Error downloading xml file.')
+    except IOError:
+        log.exception('Error saving xml file.')
+    except KeyError as e:
+        log.exception(e)

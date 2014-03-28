@@ -87,12 +87,15 @@ def get_data():
                 log.debug('Problem with line %d: ', i, exc_info=True)
 
             if user_id in usage_id:
-                data.setdefault(user_id, {})[date] = dict(start=start, end=end)
+                data.setdefault(user_id, {})[date] = {
+                    'start': start,
+                    'end': end,
+                }
             else:
                 err.append(user_id)
 
         for e in set(err):
-            print "User {0} presence data exist but details doesn't.".format(e)
+            log.debug("User %d presence data exist but details doesn't.", e)
 
     return data
 
@@ -112,15 +115,15 @@ def get_details():
     details = {}
     try:
         tree = etree.parse(app.config['DATA_XML'])
-        uroot = tree.getroot()[1]
+        uroot = tree.getroot().find('users')
         for child in uroot:
             user_id_xml = int(child.attrib['id'])
-            avatar = child[0].text
-            name = child[1].text
+            avatar = child.find('avatar').text
+            name = child.find('name').text
             details[user_id_xml] = {'avatar': avatar, 'name': name}
 
     except IOError:
-        print 'Cannot parse XML file'
+        log.debug("Cannot open XML file")
 
     return details
 

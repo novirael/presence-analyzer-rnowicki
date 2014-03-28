@@ -4,10 +4,11 @@ Helper functions used in views.
 """
 
 import csv
+import threading
 import xml.etree.ElementTree as etree
 from json import dumps
 from functools import wraps
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from flask import Response
 
@@ -28,6 +29,26 @@ def jsonify(function):
     return inner
 
 
+def cache(sec):
+    """
+    Save to cash function result for given period of time.
+    """
+    def decorator(fun):
+        cache_lock = threading.Lock()
+        fun.cache = [datetime.now(), {}]
+
+        def wrapper(*args, **kwargs):
+            with cache_lock:
+                now = datetime.now()
+                if now > fun.cache[0]:
+                    fun.cache[0] = now + timedelta(seconds=sec)
+                    fun.cache[1] = fun(*args, **kwargs)
+                return fun.cache[1]
+        return wrapper
+    return decorator
+
+
+@cache(600)
 def get_data():
     """
     Extracts presence data from CSV file and groups it by user_id.

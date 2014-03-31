@@ -54,8 +54,8 @@ def users_view():
     """
     details = get_details()
 
-    return [{'user_id': i, 'name': value['name'], 'avatar': value['avatar']}
-            for i, value in details.items()]
+    return sorted([{'user_id': i, 'name': val['name'], 'avatar': val['avatar']}
+                   for i, val in details.items()], key=lambda k: k['name'])
 
 
 @app.route('/api/v1/get_avatar/')

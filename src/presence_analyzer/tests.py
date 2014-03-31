@@ -82,6 +82,16 @@ class PresenceAnalyzerViewsTestCase(unittest.TestCase):
             'name': 'Adam P.',
             'avatar': '/api/images/users/10'
         })
+        self.assertDictEqual(data[1], {
+            'user_id': 11,
+            'name': 'Adrian K.',
+            'avatar': '/api/images/users/11'
+        })
+        self.assertDictEqual(data[2], {
+            'user_id': 12,
+            'name': 'Agata J.',
+            'avatar': '/api/images/users/12'
+        })
 
     def test_api_view(self):
         """

@@ -1,5 +1,8 @@
 {% extends "layout.html" %}
 
+{% block http %}
+    <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE9" >
+{% endblock %}
 
 {% block header %}
     Presence start-end weekday
@@ -45,7 +48,6 @@
                             value[2] = parseInterval(value[2]);
                         })
 
-                        console.log(result);
                         var data = new google.visualization.DataTable();
 
                         data.addColumn('string', 'Weekday');

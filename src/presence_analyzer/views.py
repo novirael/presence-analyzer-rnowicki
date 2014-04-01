@@ -10,6 +10,7 @@ from presence_analyzer.main import app
 from presence_analyzer.utils import jsonify, get_data, get_details, mean, \
     group_by_weekday, group_by_weekday_with_points
 
+import locale
 import logging
 log = logging.getLogger(__name__)  # pylint: disable-msg=C0103
 
@@ -54,8 +55,16 @@ def users_view():
     """
     details = get_details()
 
-    return [{'user_id': i, 'name': value['name'], 'avatar': value['avatar']}
-            for i, value in details.items()]
+    loc = locale.getlocale()
+    locale.setlocale(locale.LC_ALL, 'pl_PL.UTF-8')
+
+    result = [{'user_id': i, 'name': val['name'], 'avatar': val['avatar']}
+              for i, val in details.items()]
+    result.sort(key=lambda k: locale.strxfrm(k['name']))
+
+    locale.setlocale(locale.LC_ALL, loc)
+
+    return result
 
 
 @app.route('/api/v1/get_avatar/')

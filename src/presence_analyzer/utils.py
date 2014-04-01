@@ -119,7 +119,7 @@ def get_details():
         for child in uroot:
             user_id_xml = int(child.attrib['id'])
             avatar = child.find('avatar').text
-            name = child.find('name').text
+            name = child.find('name').text.encode('utf-8')
             details[user_id_xml] = {'avatar': avatar, 'name': name}
 
     except IOError:
